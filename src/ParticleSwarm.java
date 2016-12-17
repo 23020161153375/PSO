@@ -1,7 +1,7 @@
 
 /**
-* <p> ParticleSwarm</p>
-* <p>Description: </p>
+* <p> 粒子群</p>
+* <p>注意粒子群一旦建立，其成员个数不能改变</p>
 * @author FlyingFish
 * @date 2016-12-13
 */
@@ -19,6 +19,14 @@ public class ParticleSwarm {
 		particles = new Particle[amount];	
 	}
 	
+	/** 
+	* <p>配置粒子群的成员</p> 
+	* <p>Description: </p> 
+	* @param srcParticles 粒子源
+	* @param begin 起始位置
+	* @param end 结束位置
+	* @throws IllegalArgumentException 如果 end - begin + 1 != amountOfMembers，其中amountOfMembers是初始化时设定的成员个数
+	*/
 	public void setupMembers(Particle[] srcParticles,int begin,int end ){
 		if(end - begin + 1 != amountOfMembers)
 			throw new IllegalArgumentException("加入 "+ (end - begin + 1) + " 个成员，与初始化时粒子群有  "+  amountOfMembers + "个成员不符@");
@@ -39,17 +47,24 @@ public class ParticleSwarm {
 		swarmFitness =  fitness / amountOfMembers;
 	}
 		
-	private void normalisedSigma(){
+	/** 
+	* <p>Sigma值规范化 </p> 
+	* <p>Description: </p> 
+	* @param newSigma
+	* @return 
+	*/
+	public static double  normaliseSigma(double newSigma){
 		double w = Particle.posBound * 2;
-		if(sigma > w / 4)
-			sigma %= w / 4;		
+		if(newSigma > w / 4)
+			newSigma %= w / 4;	
+		return newSigma;
 	}
 	
 	/** 
 	* <p>找出整个粒子群中最优秀的个体 </p> 
 	* <p>Description: </p>  
 	*/
-	private void findCurrentGlobalBest(){
+	public void findCurrentGlobalBest(){
 		double maxFitness = particles[0].getFitness();
 		int indexOfElite = 0;
 		for(int i = 1;i < particles.length;i ++)
@@ -84,6 +99,22 @@ public class ParticleSwarm {
 	
 	public double[] getGlobleBestPos(){
 		return gBestPosParticle.getPos();
+	}
+
+	/**
+	 * @return the amountOfMembers
+	 */
+	public int getAmountOfMembers() {
+		return amountOfMembers;
+	}
+	
+	public String toString(){
+		StringBuilder s = new StringBuilder();
+		s.append("成员个数：" + amountOfMembers+ "\tSigma:" + sigma + "\t适应度：" + swarmFitness + "\n成员:");
+		for(int i = 0; i < particles.length;i ++)
+			s.append(particles[i] + "\n");
+		s.append("最优秀个体：\n" + gBestPosParticle);
+		return s.toString();
 	}
 	
 }

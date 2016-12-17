@@ -8,7 +8,7 @@
 */
 
 /**
-* <p> BasicPSOTest</p>
+* <p> 基础版粒子群优化算法</p>
 * <p>Description: </p>
 * @author FlyingFish
 * @date 2016-12-13
@@ -18,25 +18,24 @@ public class BasicPSO extends PSO {
 	public BasicPSO(){
 		super(50,2,2,2,1000,0.1);
 	}
-
-	/** fitness = function(posBound,posBound) - function(p.position[0],p.position[1])    这里posBound = 1000
-	 * @see PSO#fitness(Particle)
-	 */
-	@Override
-	public double fitness(Particle p) {
-		// TODO Auto-generated method stub
-		return 2000000 - Math.pow(p.getPos(0), 2) - Math.pow(p.getPos(1), 2);
+	
+	public BasicPSO(int amountOfParticles,int dimension,double c1,double c2,double posBound,double velBoundFactor){
+		super(amountOfParticles, dimension, c1, c2, posBound, velBoundFactor);
 	}
 
-	/** 
-	* <p>测试函数，找最小值 </p> 
-	* <p>function(x1,x2) = x1^2 +x2^2 </p> 
-	* @param x1
-	* @param x2
-	* @return 
-	*/
-	public double function(double x1,double x2){
-		return Math.pow(x1, 2) + Math.pow(x2, 2);
+
+	@Override
+	public double fitness(double[] var) {
+		// TODO Auto-generated method stub
+		return 100000 / (1 +fTablet(var) );
+		
+	}
+	
+	public static double fTablet(double[] var){
+		double result = 1000000 * var[0] * var[0];
+		for(int i = 1; i < var.length;i ++)
+			result += var[i] * var[i];
+		return result;
 	}
 	
 	/** 
@@ -47,12 +46,16 @@ public class BasicPSO extends PSO {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		//System.out.println(Math.pow(3, 2));
-		BasicPSO pso = new BasicPSO();
-		pso.basicPSO();
+		//BasicPSO pso = new BasicPSO();
+		BasicPSO pso = new BasicPSO(100,30,1.5,1.5,100,0.01);		
+		pso.basicPSO(6000);
 		double[] optVar = pso.getOptimisedVar();
 		System.out.println("优化后变量值为：");
-		System.out.println(optVar[0] + " " + optVar[1]);
-		System.out.println("结果为 " + pso.function(optVar[0],optVar[1]));;
+		//System.out.println(optVar[0] + " " + optVar[1]);
+		for(int i = 0; i < optVar.length;i ++)
+			System.out.print(optVar[i] + " ");	
+		//System.out.println("结果为 " + pso.function(optVar[0],optVar[1]));;
+		System.out.println("\n最终结果：" + fTablet(optVar));		
 	}
 
 }
